@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    ports:
+      - "3000:3000" # Expose frontend on port 80
+    networks:
+      - frontend-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  database:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "yourStrong(!)Password"
+      MSSQL_PID: "Express"
+    networks:
+      - backend-network
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    restart: unless-stopped
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - PORT=5000
+      - DB_SERVER=database
+      - DB_USER=sa
+      - DB_PASSWORD=yourStrong(!)Password
+      - DB_NAME=master
+    networks:
+      - backend-network
+      - frontend-network
+    depends_on:
+      - database
+    restart: always
+
+networks:
+  frontend-network:
+    driver: bridge
+  backend-network:
+    driver: bridge
+    internal: true # This makes the network private
+
+volumes:
+  sqlserver_data:
+    driver: local

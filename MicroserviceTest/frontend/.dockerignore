@@ -1,0 +1,33 @@
+# Node modules (for frontend and backend)
+node_modules
+npm-debug.log
+
+# Build output (for frontend)
+build
+
+# Local configuration files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Dockerfile and Docker-compose files (usually should be included, but this is an example)
+Dockerfile
+docker-compose.yml
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Build artifacts
+dist/
+coverage/

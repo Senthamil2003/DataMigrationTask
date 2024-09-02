@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  database:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Password"  # Replace with a secure password
+      MSSQL_PID: "Express"
+    networks:
+      - backend-network
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - DB_SERVER=database
+      - DB_USER=sa
+      - DB_PASSWORD=Password  # Replace with the same secure password
+      - DB_DATABASE=master    # Updated to match the code environment variable
+    networks:
+      - backend-network
+    depends_on:
+      - database
+    restart: unless-stopped
+
+networks:
+  backend-network:
+    driver: bridge
+
+volumes:
+  sqlserver_data:
+    driver: local
